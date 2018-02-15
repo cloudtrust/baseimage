@@ -1,11 +1,12 @@
 FROM fedora:27
 
-ARG cloudtrust_base_image_git_tag
+ARG ssh_key_name
+ARG baseimage_git_tag
 
 #Systemd
 ENV container=docker
 RUN dnf -y update && \
-    dnf -y git net-tools procps install iputils bind-utils nmap tcpdump vim systemd monit && \
+    dnf -y install git net-tools procps iputils bind-utils nmap tcpdump vim systemd monit && \
     dnf clean all && \
 	(cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done) && \
 	rm -f /lib/systemd/system/multi-user.target.wants/* && \
@@ -25,15 +26,18 @@ RUN printf '%s\n%s\n%s\n%s\n' \
 '"\e[1;5D":backward-word' \
 '"\e[1;5C":forward-word' >> /root/.inputrc
 
+WORKDIR /cloudtrust
+ADD keys/${ssh_key_name} keys/${ssh_key_name}.pub /cloudtrust/
 RUN	mkdir /root/.ssh && \
-	mv $rsa_key_name $rsa_key_name.pub /root/.ssh/ && \
+	mv ${ssh_key_name} ${ssh_key_name}.pub /root/.ssh/ && \
 	chmod 600 /root/.ssh/* && \
     ssh-keyscan github.com >> /root/.ssh/known_hosts && \
-WORKDIR /cloudtrust
+  	echo "IdentityFile /root/.ssh/${ssh_key_name}" >> /etc/ssh/ssh_config
 
 RUN git clone git@github.com:cloudtrust/baseimage.git && \
+    cd baseimage && \
     git checkout ${baseimage_git_tag} && \
-	install -v -o root -g root -m 644 baseimage/deploy/common/etc/systemd/system/monit.service /etc/systemd/system/monit.service && \
+	install -v -o root -g root -m 644 deploy/common/etc/systemd/system/monit.service /etc/systemd/system/monit.service && \
 	systemctl enable monit
 
 CMD ["/sbin/init"]
