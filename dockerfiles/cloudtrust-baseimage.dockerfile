@@ -2,6 +2,7 @@ FROM fedora:27
 
 ARG ssh_key_name
 ARG baseimage_git_tag
+ARG known_hosts_file
 
 #Systemd
 ENV container=docker
@@ -34,7 +35,7 @@ RUN printf '%s\n%s\n%s\n%s\n' \
 # The known_hosts file is added to allow for private repositories
 RUN mkdir -p /root/.ssh
 ADD keys/${ssh_key_name} keys/${ssh_key_name}.pub /root/.ssh/
-ADD keys/known_hosts /root/.ssh/known_hosts
+ADD keys/${known_hosts_file} /root/.ssh/known_hosts
 
 RUN	chmod 600 /root/.ssh/* && \
     ssh-keyscan github.com >> /root/.ssh/known_hosts && \
