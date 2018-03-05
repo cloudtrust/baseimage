@@ -4,10 +4,10 @@ ARG ssh_key_name
 ARG baseimage_git_tag
 ARG known_hosts_file
 
-#Systemd
+# Systemd
 ENV container=docker
 RUN dnf -y update && \
-    dnf -y install git net-tools procps iputils bind-utils nmap tcpdump vim systemd monit && \
+    dnf -y install git net-tools procps iputils bind-utils nmap tcpdump vim systemd monit wget && \
     dnf clean all 
 
 # Remove all the regular systemd razzle-dazzle
@@ -23,7 +23,7 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == system
 VOLUME ["/sys/fs/cgroup"]
 STOPSIGNAL SIGRTMIN+3
 
-#At jdr's request, my bash shortcuts
+# At jdr's request, my bash shortcuts
 RUN printf '%s\n%s\n%s\n%s\n' \
 '"\e[A":history-search-backward' \
 '"\e[B":history-search-forward' \
@@ -41,7 +41,7 @@ RUN	chmod 600 /root/.ssh/* && \
     ssh-keyscan github.com >> /root/.ssh/known_hosts && \
   	echo "IdentityFile /root/.ssh/${ssh_key_name}" >> /etc/ssh/ssh_config
 
-#Prepare baseimage
+# Prepare baseimage
 WORKDIR /cloudtrust
 RUN git clone git@github.com:cloudtrust/baseimage.git
 WORKDIR /cloudtrust/baseimage
