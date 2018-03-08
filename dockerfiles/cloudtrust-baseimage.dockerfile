@@ -46,7 +46,7 @@ WORKDIR /cloudtrust
 RUN git clone git@github.com:cloudtrust/baseimage.git
 WORKDIR /cloudtrust/baseimage
 RUN git checkout ${baseimage_git_tag} && \
-	install -v -o root -g root -m 644 deploy/common/etc/systemd/system/monit.service /etc/systemd/system/monit.service
+	install -v -o root -g root -m 644 deploy/etc/systemd/system/monit.service /etc/systemd/system/monit.service
 
 RUN systemctl enable monit
 
