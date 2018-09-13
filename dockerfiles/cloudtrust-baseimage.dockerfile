@@ -4,11 +4,14 @@ ARG ssh_key_name
 ARG baseimage_git_tag
 ARG known_hosts_file
 
+ARG systemd_version=234-11.git5f8984e.fc27
+ARG monit_version=5.25.1-1.fc27
+
 # Systemd
 ENV container=docker
 RUN dnf -y update && \
-    dnf -y install git net-tools procps iputils bind-utils nmap tcpdump vim systemd monit wget && \
-    dnf clean all 
+    dnf -y install git net-tools procps iputils bind-utils nmap tcpdump vim systemd-$systemd_version monit-$monit_version wget && \
+    dnf clean all
 
 # Remove all the regular systemd razzle-dazzle
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done) && \
