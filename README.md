@@ -16,3 +16,14 @@ docker start test
 docker exec -ti test /bin/bash
 systemctl status
 ```
+
+Versionning components has been performed in the following way:
+1. Enter a container in the version used by cloudtrust.
+2. Clean the repo cache.
+3. Search for the existing versions of a package.
+4. Use the latest versions in the dockerfile.
+
+       docker run -it fedora:27 /bin/bash
+       dnf clean all
+       dnf list --showduplicates systemd
+
