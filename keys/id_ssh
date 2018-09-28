@@ -1,0 +1,3 @@
+-----BEGIN RSA PRIVATE KEY-----
+# Put your SSH private key with read access to CloudTrust repositories on GitHub.
+-----END RSA PRIVATE KEY-----
